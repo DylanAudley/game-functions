@@ -1,0 +1,22 @@
+def testFunctions_print_welcome(name, width=20):
+  """Prints a welcome message for the given name, centered within a specified width.
+
+    Args:
+        name (str): The name of the person to welcome.
+        width (int, optional): The total width of the output message. Defaults to 20.
+
+    Returns:
+        None: This function does not return a value; it prints the welcome message directly.
+
+    Example:
+        >>> print_welcome('Jeff')
+        Hello, Jeff!    # Output is centered in a width of 20
+  """
+
+  messageCentered = f"{'Hello, ' + name + '!':^{20}}"
+  print(messageCentered)
+  return None
+if __name__ == '__main__':
+    testFunctions_print_welcome('Jeff')
+    testFunctions_print_welcome('Audrey', 30)
+    testFunctions_print_welcome('Ludacris', 15)
