@@ -1,0 +1,30 @@
+from gamefunctions import purchase_item, new_random_monster, print_welcome, print_shop_menu
+
+def main():
+    # Greet the user
+    user_name = input("Enter your name: ")
+    print_welcome(user_name)
+
+    # Demonstrate purchasing items
+    item_price = float(input("Enter the price of the item you want to purchase: "))
+    starting_money = float(input("Enter the amount of money you have: "))
+    quantity = int(input("How many items do you want to buy? "))
+    
+    num_purchased, leftover_money = purchase_item(item_price, starting_money, quantity)
+    print(f'You were able to purchase: {num_purchased} items.')
+    print(f'You have ${leftover_money:.2f} left.')
+
+    # Generate a random monster
+    monster = new_random_monster()
+    print(f'A wild {monster["name"]} appears!')
+    print(f'Description: {monster["description"]}')
+    print(f'Health: {monster["health"]}')
+    print(f'Power: {monster["power"]}')
+    print(f'Money: {monster["money"]}')
+
+    # Print a shop menu
+    print_shop_menu('Apple', 3.99, 'Orange', 2.50)
+
+# Call the main function to run the game
+if __name__ == "__main__":
+    main()
