@@ -2,11 +2,38 @@
 #Adventure Functions
 #09/24/2024
 
-""" This is the main module for my gamefunctions. 
-    This is the file I started with, and where all of the main functions and output codes will be.
-    The purpose of this module is to help me learn python. 
 """
+Module Name: adventure_functions
 
+Description:
+    This module contains various functions that are part of a text-based adventure game.
+    It includes functionalities for purchasing items, generating random monsters, 
+    printing welcome messages, and displaying a shop menu. The primary goal of this 
+    module is to facilitate learning Python through practical implementation in game development.
+
+Functions:
+    - purchase_item(itemPrice, startingMoney, quantityToPurchase=1): 
+        Calculates the number of items purchased and the leftover money.
+    - new_random_monster(): 
+        Chooses a random monster from a predefined list with unique traits.
+    - print_welcome(name, width=20): 
+        Prints a centered welcome message for a given name.
+    - print_shop_menu(item1_name, item1_price, item2_name, item2_price): 
+        Prints a formatted menu with two items and their prices.
+
+Examples:
+    To purchase items:
+        >>> num_purchased, leftover_money = purchase_item(2, 24, 6)
+
+    To generate a random monster:
+        >>> monster = new_random_monster()
+
+    To print a welcome message:
+        >>> print_welcome('Jeff')
+
+    To display a shop menu:
+        >>> print_shop_menu('Apple', 3.99, 'Orange', 2.50)
+"""
 
 #Function that takes the price of an item, the amount of money you start with and how many you want to purchase and returns how many items you were able to purchase and the amount of money you have leftover.
 
