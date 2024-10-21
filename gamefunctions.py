@@ -38,7 +38,7 @@ Examples:
 #Function that takes the price of an item, the amount of money you start with and how many you want to purchase and returns how many items you were able to purchase and the amount of money you have leftover.
 
 def purchase_item(itemPrice, startingMoney, quantityToPurchase=1):
-  """ Calculates the number of items purchased and the leftover money.
+    """ Calculates the number of items purchased and the leftover money.
       
       Args:
         itemPrice: The price of each item.
@@ -47,8 +47,7 @@ def purchase_item(itemPrice, startingMoney, quantityToPurchase=1):
 
       Returns:
         A tuple containing the number of items purchased and the leftover money.
-  """
-
+    """
     num_purchased = int((startingMoney/itemPrice)-quantityToPurchase)
     leftover_money = (startingMoney - (itemPrice * quantityToPurchase))
     return (num_purchased, leftover_money)
@@ -71,7 +70,7 @@ print('You have ${} afterwards.'.format(leftover_money))
 import random
 
 def new_random_monster():
-   """Chooses a random monster from a predefined list of monsters, each with unique traits.
+    """Chooses a random monster from a predefined list of monsters, each with unique traits.
 
     Each monster has different attributes, such as health, power, and money, which are randomly selected from predefined ranges.
 
@@ -141,7 +140,7 @@ print_welcome('Ludacris', 15)
 #Function that prints a shop menu with the correct alligments, decimal counts, and border format
 
 def print_shop_menu(item1_name, item1_price, item2_name, item2_price):
-  """Prints a formatted menu with two items and their prices.
+    """Prints a formatted menu with two items and their prices.
 
     This function creates a visually appealing menu layout that displays the names and prices
     of two items, aligning them properly for readability.
@@ -158,23 +157,23 @@ def print_shop_menu(item1_name, item1_price, item2_name, item2_price):
     Example:
         >>> print_shop_menu('Apple', 3.99, 'Orange', 2.50)
         /----------------------\
-        | Apple                $3.99  |
-        | Orange               $2.50  |
+        | Apple         $3.99  |
+        | Orange        $2.50  |
         \----------------------/
     """
 
-  # Format the prices with two decimal places and a dollar sign
-  formatted_price1 = f'${item1_price:.2f}'
-  formatted_price2 = f'${item2_price:.2f}'
+    # Format the prices with two decimal places and a dollar sign
+    formatted_price1 = f'${item1_price:.2f}'
+    formatted_price2 = f'${item2_price:.2f}'
 
-  # Calculate the maximum length of the item names
-  max_name_length = max(len(item1_name), len(item2_name))
+    # Calculate the maximum length of the item names
+    max_name_length = max(len(item1_name), len(item2_name))
 
   # Print the menu with the formatted prices and proper alignment
-  print('/' + '-' * (max_name_length + 12) + '\\')
-  print('| {:<{}s} {:>8}  |'.format(item1_name, max_name_length, formatted_price1))
-  print('| {:<{}s} {:>8}  |'.format(item2_name, max_name_length, formatted_price2))
-  print('\\' + '-' * (max_name_length + 12) + '/')
+    print('/' + '-' * (max_name_length + 12) + '\\')
+    print('| {:<{}s} {:>8}  |'.format(item1_name, max_name_length, formatted_price1))
+    print('| {:<{}s} {:>8}  |'.format(item2_name, max_name_length, formatted_price2))
+    print('\\' + '-' * (max_name_length + 12) + '/')
 
 print_shop_menu('Apple', 3.99, 'Orange', 2.50)
 print_shop_menu('Banana', 1.29, 'Grapefruit', 4.99)
