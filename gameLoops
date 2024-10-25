@@ -10,28 +10,52 @@ def main():
     print(f'Power: {monster["power"]}')
     print(f'Money: {monster["money"]}')
 
+    playerHealth = 100
+
     while True:
-        displayMenu(monster)
+        displayMenu(monster, playerHealth)
 
-    choice = input('Enter your choice (1-3): ')
-    if choice == 1: 
-        print(f'You chose to fight the {monster["name"]}, brave choice solider.')
+        choice = input('Enter your choice (1-3): ')
+        if choice == 1: 
+            fightMonster(monster)
 
-    elif choice == 2:
-        print(f'You chose to sleep to restore HP for {monster["money"]}, safe choice solider.')
+        elif choice == 2:
+            print(f'You chose to sleep to restore HP for {monster["money"]}, safe choice solider.')
     
-    elif choice == 3:
-        print('You chose to quit. Goodbye!!')
+        elif choice == 3:
+            print('You chose to quit. Goodbye!!')
+            break
 
-    else:
-        print('Invalid choice. Please chose (1-3).')
+        else:
+            print('Invalid choice. Please chose (1-3).')
 
-def displayMenu(monster):
-    print(f'Current HP: {monster["health"]}, Current Gold: {monster["money"]}')
+def displayMenu(monster, playerHealth):
+    playerHealth = 100
+    print(f'Current HP: {playerHealth}, Current Gold: {monster["money"]}')
     print('What would you like to do?')
     print("1) Fight Monster")
     print("2) Sleep (Restore HP for 5 Gold)")
     print("3) Quit")
+
+def fightMonster(monster):
+    playerHealth = 100 
+    while monster["health"] > 0 and playerHealth > 0:
+        print(f'You attack the {monster["name"]}!')
+        monster["health"] -= 10
+        print(f'The {monster["name"]} has {monster["health"]} left!')
+    
+        if monster["health"] <= 0:
+            print(f"You defeated the {monster['name']}!")
+            break
+        
+        playerHealth -= monster["power"]
+        print(f'The {monster["name"]} attacks back! You have {playerHealth} HP left!')
+
+        if playerHealth <= 0:
+            print(f'The {monster["name"]} killed you!')
+            break
+
+
 
 if __name__ == '__main__':
     main()
