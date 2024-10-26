@@ -7,7 +7,7 @@ def main():
     interact with the monster by fighting, sleeping to restore health,
     or quitting the game.
     """
-
+    
     # Generate a random monster
     monster = new_random_monster()
     print(f'A wild {monster["name"]} appears!')
@@ -16,47 +16,51 @@ def main():
     print(f'Power: {monster["power"]}')
     print(f'Money: {monster["money"]}')
 
-    playerHealth = 100
+    playerHealth = 100  # Set players base health
+    playerGold = 10  # Set player's gold 
 
     while True:
-        playerHealth = displayMenu(monster, playerHealth)
+        displayMenu(monster, playerHealth, playerGold)
 
         choice = input('Enter your choice (1-3): ')
         if choice == '1': 
-            playerHealth = displayMenu(monster, playerHealth)
+            playerHealth = fightMonster(monster, playerHealth)
+            if playerHealth <= 0:  # Check if the player is dead after the fight
+                print('Game Over!')
+                break 
 
         elif choice == '2':
-            if monster["money"] >= 5:  # Check if the player has enough money to heal
+            if playerGold >= 5:  # Check if the player has enough money
                 playerHealth += 15  # Restore 15 HP
-                monster["money"] -= 5  # Deduct 5 gold
-                print(f'You restored 15 HP! Current HP: {playerHealth}. Current Gold: {monster["money"]}.')
+                playerGold -= 5  # Deduct 5 gold
+                print(f'You slept and restored 15 HP! Current HP: {playerHealth}. Current Gold: {playerGold}.')
             else:
                 print('Not enough gold to sleep!')
-    
+
         elif choice == '3':
             print('You chose to quit. Goodbye!!')
             break
 
         else:
-            print('Invalid choice. Please chose (1-3).')
+            print('Invalid choice. Please choose (1-3).')
 
-def displayMenu(monster, playerHealth):
+def displayMenu(monster, playerHealth, playerGold):
     """
     Displays the current status of the player and the available options.
 
     Parameters:
         monster (dict): The current monster with its attributes.
         playerHealth (int): The player's current health.
+        playerGold (int): The player's current gold.
 
     Returns:
-        int: The player's current health.
+        None
     """
-    print(f'Current HP: {playerHealth}, Current Gold: {monster["money"]}')
+    print(f'Current HP: {playerHealth}, Current Gold: {playerGold}')
     print('What would you like to do?')
     print("1) Fight Monster")
     print("2) Sleep (Restore HP for 5 Gold)")
     print("3) Quit")
-    return playerHealth
 
 def fightMonster(monster, playerHealth):
     """
@@ -71,7 +75,7 @@ def fightMonster(monster, playerHealth):
     """
     while monster["health"] > 0 and playerHealth > 0:
         print(f'You attack the {monster["name"]}!')
-        monster["health"] -= 10 #deduct 10 health from monster
+        monster["health"] -= 10  # Deduct 10 health from monster
         print(f'The {monster["name"]} has {monster["health"]} left!')
     
         if monster["health"] <= 0:
@@ -85,8 +89,7 @@ def fightMonster(monster, playerHealth):
             print(f'The {monster["name"]} killed you!')
             break
     
-    return playerHealth # returns updated player health after the fight
-
+    return playerHealth  # Returns updated player health after the fight
 
 if __name__ == '__main__':
     main()
