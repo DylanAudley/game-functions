@@ -1,9 +1,9 @@
 from gamefunctions import new_random_monster
 
 itemInventory = [
-                 {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25},
-                 {'name': 'round shield', 'type': 'shield', 'minDurability': 1, 'currentDurability': 50},
-                 {'name': 'milkshake', 'type': 'healthBoost'} 
+                 {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
+                 {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.'},
+                 {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10} 
                 ]
 
 def main():
@@ -25,13 +25,17 @@ def main():
     playerHealth = 100  # Set players base health
     playerGold = 10  # Set player's gold 
     equippiedItems = [] # Set list to keep track of items
+    playerAttackPower = 10  # Default attack power
+    swordDurability = itemInventory[0]['currentDurability']  # Set initial sword durability
 
     while True:
         displayMenu(monster, playerHealth, playerGold, equippiedItems)
 
-        choice = input('Enter your choice (1-4): ')
+        choice = input('Enter your choice (1-5): ')
         if choice == '1': 
-            playerHealth = fightMonster(monster, playerHealth)
+            if 'swashbuckler sword' in equippiedItems and swordDurability < itemInventory[0]['currentDurability']:
+                playerHealth = fightMonster(monster, playerHealth, playerAttackPower)
+                swordDurability -= 1
             if playerHealth <= 0:  # Check if the player is dead after the fight
                 print('Game Over!')
                 break 
@@ -44,15 +48,25 @@ def main():
             else:
                 print('Not enough gold to sleep!')
 
-        elif choice == '3':
-            equipItems(itemInventory, equippiedItems)
+        elif choice == '3':  # Equip items
+            playerHealth, playerAttackPower, swordDurability = equipItems(
+                itemInventory, equippiedItems, playerHealth, playerAttackPower, swordDurability)
 
+        
         elif choice == '4':
+            # Use the magic potion to defeat the monster without losing HP
+            if 'magic potion' in equippiedItems:
+                print(f"You use the magic potion and defeat the {monster['name']} without losing HP!")
+                equippiedItems.remove('magic potion')  # Remove potion after use
+            else:
+                print("You have no magic potions to use!")
+
+        elif choice == '5':
             print('You chose to quit. Goodbye!!')
             break
 
         else:
-            print('Invalid choice. Please choose (1-3).')
+            print('Invalid choice. Please choose (1-5).')
 
 def displayMenu(monster, playerHealth, playerGold, equippiedItems):
     """
@@ -62,6 +76,7 @@ def displayMenu(monster, playerHealth, playerGold, equippiedItems):
         monster (dict): The current monster with its attributes.
         playerHealth (int): The player's current health.
         playerGold (int): The player's current gold.
+        equippiedItems (list): The items the player has equipped.
 
     Returns:
         None
@@ -72,22 +87,24 @@ def displayMenu(monster, playerHealth, playerGold, equippiedItems):
     print("1) Fight Monster")
     print("2) Sleep (Restore HP for 5 Gold)")
     print("3) Choose an item from inventory to equip")
-    print("4) Quit")
+    print("4) Use your magic potion (Defeat monster without losing HP)")
+    print("5) Quit")
 
-def fightMonster(monster, playerHealth):
+def fightMonster(monster, playerHealth, playerAttackPower):
     """
     Simulates a fight between the player and the monster.
 
     Parameters:
         monster (dict): The current monster with its attributes.
         playerHealth (int): The player's current health.
+        playerAttackPower (int): The player's current attack power.
 
     Returns:
         int: The updated player's health after the fight.
     """
     while monster["health"] > 0 and playerHealth > 0:
         print(f'You attack the {monster["name"]}!')
-        monster["health"] -= 10  # Deduct 10 health from monster
+        monster["health"] -= playerAttackPower  # Deduct health from monster using players updated attack power
         print(f'The {monster["name"]} has {monster["health"]} left!')
     
         if monster["health"] <= 0:
@@ -103,17 +120,21 @@ def fightMonster(monster, playerHealth):
     
     return playerHealth  # Returns updated player health after the fight
 
-def equipItems(itemInventory, equippiedItems):
+def equipItems(itemInventory, equippiedItems, playerHealth, playerAttackPower, swordDurability):
     """
     Allows the player to equip items from the inventory.
 
     Parameters:
         itemInventory (list): The list of items available for equipping.
         equippedItems (list): The list of items the player has currently equipped.
+        playerHealth (int): The player's current health.
+        playerAttackPower (int): The player's current attack power.
+        swordDurability (int): Current durability of the sword.
 
     Returns:
-        None
+         tuple: Updated playerHealth, playerAttackPower, and swordDurability.
     """
+
     print("\nAvailable items to equip:")
     for index, item in enumerate(itemInventory):
         print(f"{index + 1}: {item['name']} (Type: {item['type']})")
@@ -130,18 +151,22 @@ def equipItems(itemInventory, equippiedItems):
             if 0 <= choice_index < len(itemInventory):
                 item = itemInventory[choice_index]
                 if item['type'] == 'healthBoost':
+                    playerHealth += item['healthRestore']
                     equippiedItems.append(item['name'])
-                    print(f"You equipped {item['name']} for health boost!")
-                elif item['type'] in ['weapon', 'shield']:
-                    if item['currentDurability'] >= item['minDurability']:
+                    print(f"You equipped {item['name']} for {item['healthRestore']} HP!")
+                elif item['type'] == 'weapon':
+                    if swordDurability > 0:
+                        playerAttackPower += item['attackBoost']
                         equippiedItems.append(item['name'])
-                        print(f"You equipped {item['name']}!")
+                        print(f"You equipped {item['name']} and gained {item['attackBoost']} attack power!")
                     else:
                         print(f"Cannot equip {item['name']}: durability too low.")
             else:
                 print("Invalid choice, please try again.")
         else:
             print("Please enter a valid number or 'done'.")
+
+    return playerHealth, playerAttackPower, swordDurability  # Updated values
 
 if __name__ == '__main__':
     main()
