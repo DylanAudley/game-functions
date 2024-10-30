@@ -48,7 +48,7 @@ def main():
                 playerHealth += 15  # Restore 15 HP
                 playerGold -= 5  # Deduct 5 gold
                 playerHealth = min(playerHealth, 100)  # Cap health at 100
-                print(f'You slept and restored 15 HP! Current HP: {playerHealth}. Current Gold: {playerGold}.')
+                print(f'You slept and restored 15 HP (Unless you already had 100 HP... you gotta read carefully!) Current HP: {playerHealth}. Current Gold: {playerGold}.')
             else:
                 print('Not enough gold to sleep!')
 
@@ -163,7 +163,7 @@ def equipItems(itemInventory, equippiedItems, playerHealth, playerAttackPower, s
                         item['quantity'] -= 1  # Reduce the quantity
                         playerHealth = min(playerHealth, 100)  # Cap health at 100
                         equippiedItems.append(item['name'])
-                        print(f"You equipped {item['name']} for {item['healthRestore']} HP!")
+                        print(f"You equipped {item['name']} for {item['healthRestore']} HP! (Unless you already had 100 HP :)")
                     else:
                         print('You are out of milkshakes, please choose something else or "done".')
                 elif item['type'] == 'weapon':

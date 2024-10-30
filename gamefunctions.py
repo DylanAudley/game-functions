@@ -93,7 +93,7 @@ def new_random_monster():
 
     monsterList = [{'name': 'goblin', 'description': 'A sneaky little guy, grabbing your gold.', 'health': [8, 10, 12], 'power': [1, 2, 3], 'money' : [20, 22, 24]},
                    {'name': 'troll', 'health': [15, 18, 21], 'description' : 'A grumpy bridge troll who has a huge wooden club.', 'power' : [25, 30, 35], 'money' : [8, 10, 12]},
-                   {'name' : 'George the Giant', 'description' : 'The gentlest giant of the land, but quite a sensitive fella.', 'health': [1000, 1200, 1400], 'power' : [100, 120, 140], 'money' : [3, 5, 7]}]
+                   {'name' : 'George the Giant', 'description' : 'Typically a gentle giant, but has quite a sensitive temper.', 'health': [1000, 1200, 1400], 'power' : [100, 120, 140], 'money' : [3, 5, 7]}]
 
     monster = random.choice(monsterList)
     monster['health'] = random.choice(monster['health'])
