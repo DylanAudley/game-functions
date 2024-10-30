@@ -2,9 +2,11 @@ from gamefunctions import new_random_monster
 
 itemInventory = [
                  {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
-                 {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.', 'quantity': 1},
-                 {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10} 
+                 {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10, 'quantity': 3},
+                 {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.', 'quantity': 1}
                 ]
+
+# Switch the types to in battle and out of battle and dont give anything that is not equiblable as an option (potion)
 
 def main():
     """
@@ -27,12 +29,14 @@ def main():
     equippiedItems = [] # Set list to keep track of items
     playerAttackPower = 10  # Default attack power
     swordDurability = itemInventory[0]['currentDurability']  # Set initial sword durability
+    monsterDefeated = False # Sets a variable to determine if the monster has already been killed i.e Magic Potion
+    potionUsed = False
 
     while True:
-        displayMenu(monster, playerHealth, playerGold, equippiedItems)
+        displayMenu(monster, playerHealth, playerGold, equippiedItems, monsterDefeated)
 
         choice = input('Enter your choice (1-5): ')
-        if choice == '1': 
+        if choice == '1' and not monsterDefeated:
             playerHealth = fightMonster(monster, playerHealth, playerAttackPower)
             if 'swashbuckler sword' in equippiedItems and swordDurability < itemInventory[0]['currentDurability']:
                 playerHealth = fightMonster(monster, playerHealth, playerAttackPower)
@@ -58,11 +62,15 @@ def main():
         
         elif choice == '4':  # Use the magic potion to defeat the monster without losing HP
             potion = next((item for item in itemInventory if item['name'] == 'magic potion'), None)
-            if potion and potion['quantity'] > 0:
+            if potion and potion['quantity'] > 0 and not monsterDefeated:
                 print(f"You use a magic potion and defeat the {monster['name']} without losing HP!")
                 potion['quantity'] -= 1  # Reduce the potion count
+                monsterDefeated = True  # Mark the monster as defeated
             else:
-                print("You have no magic potions to use!")
+                if monsterDefeated:
+                    print("The monster has already been defeated!")
+                else:
+                    print("You have no magic potions to use!")
 
         elif choice == '5':
             print('You chose to quit. Goodbye!!')
@@ -71,7 +79,7 @@ def main():
         else:
             print('Invalid choice. Please choose (1-5).')
 
-def displayMenu(monster, playerHealth, playerGold, equippiedItems):
+def displayMenu(monster, playerHealth, playerGold, equippiedItems, monsterDefeated):
     """
     Displays the current status of the player and the available options.
 
@@ -87,10 +95,10 @@ def displayMenu(monster, playerHealth, playerGold, equippiedItems):
     print(f'Current HP: {playerHealth}, Current Gold: {playerGold}')
     print('Equipped items:', ', '.join(equippiedItems) if equippiedItems else 'None')
     print('What would you like to do?')
-    print("1) Fight Monster")
+    print("1) Fight Monster" if not monsterDefeated and not potionUsed else "1) Monster Defeated")
     print("2) Sleep (Restore HP for 5 Gold)")
     print("3) Choose an item from inventory to equip")
-    print("4) Use your magic potion (Defeat monster without losing HP)")
+    print("4) Use your magic potion (Defeat monster without losing HP)"if not monsterDefeated else "4) Monster Already Defeated")
     print("5) Quit")
 
 def fightMonster(monster, playerHealth, playerAttackPower):
@@ -141,7 +149,8 @@ def equipItems(itemInventory, equippiedItems, playerHealth, playerAttackPower, s
 
     print("\nAvailable items to equip:")
     for index, item in enumerate(itemInventory):
-        print(f"{index + 1}: {item['name']} (Type: {item['type']})")
+        if item['type'] != 'potion':  # Only show equipable items
+            print(f"{index + 1}: {item['name']}")
         
     while True:
         choice = input('Enter the number of the item you would like to equip or type "done" to exit: ')
@@ -165,6 +174,9 @@ def equipItems(itemInventory, equippiedItems, playerHealth, playerAttackPower, s
                         print(f"You equipped {item['name']} and gained {item['attackBoost']} attack power!")
                     else:
                         print(f"Cannot equip {item['name']}: durability too low.")
+                elif item['type]'] == 'potion': 
+                    if item['quantity'] == 0:
+                        print('You are out of magic potions, please choose something else or "done".')
             else:
                 print("Invalid choice, please try again.")
         else:
