@@ -2,7 +2,7 @@ from gamefunctions import new_random_monster
 
 itemInventory = [
                  {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
-                 {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.'},
+                 {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.', 'quantity': 1},
                  {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10} 
                 ]
 
@@ -33,12 +33,15 @@ def main():
 
         choice = input('Enter your choice (1-5): ')
         if choice == '1': 
+            playerHealth = fightMonster(monster, playerHealth, playerAttackPower)
             if 'swashbuckler sword' in equippiedItems and swordDurability < itemInventory[0]['currentDurability']:
                 playerHealth = fightMonster(monster, playerHealth, playerAttackPower)
                 swordDurability -= 1
-            if playerHealth <= 0:  # Check if the player is dead after the fight
-                print('Game Over!')
-                break 
+                if playerHealth <= 0:  # Check if the player is dead after the fight
+                    print('Game Over!')
+                    break 
+            else: 
+                print("Either the sword is not equipped or it has no durability left.")
 
         elif choice == '2':
             if playerGold >= 5:  # Check if the player has enough money
@@ -53,11 +56,11 @@ def main():
                 itemInventory, equippiedItems, playerHealth, playerAttackPower, swordDurability)
 
         
-        elif choice == '4':
-            # Use the magic potion to defeat the monster without losing HP
-            if 'magic potion' in equippiedItems:
-                print(f"You use the magic potion and defeat the {monster['name']} without losing HP!")
-                equippiedItems.remove('magic potion')  # Remove potion after use
+        elif choice == '4':  # Use the magic potion to defeat the monster without losing HP
+            potion = next((item for item in itemInventory if item['name'] == 'magic potion'), None)
+            if potion and potion['quantity'] > 0:
+                print(f"You use a magic potion and defeat the {monster['name']} without losing HP!")
+                potion['quantity'] -= 1  # Reduce the potion count
             else:
                 print("You have no magic potions to use!")
 
@@ -102,11 +105,12 @@ def fightMonster(monster, playerHealth, playerAttackPower):
     Returns:
         int: The updated player's health after the fight.
     """
+        
     while monster["health"] > 0 and playerHealth > 0:
         print(f'You attack the {monster["name"]}!')
-        monster["health"] -= playerAttackPower  # Deduct health from monster using players updated attack power
+        monster["health"] -= playerAttackPower
         print(f'The {monster["name"]} has {monster["health"]} left!')
-    
+        
         if monster["health"] <= 0:
             print(f"You defeated the {monster['name']}!")
             break
