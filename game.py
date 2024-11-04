@@ -123,7 +123,13 @@ def fightMonster(monster, playerHealth, playerAttackPower):
         if playerHealth <= 0: # Check if player has HP 
             print(f'The {monster["name"]} killed you!')
             break
-    
+
+        # Option to run away or continue fighting
+        choice = input('Would you like to: (1) Continue fighting or (2) Run away?')
+        if choice == '2':
+            print('You chose to run away!')
+            return playerHealth
+        
     return playerHealth  # Returns updated player health after the fight
 
 def equipItems(itemInventory, equippiedItems, playerHealth, playerAttackPower, swordDurability):
