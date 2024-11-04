@@ -48,21 +48,27 @@ def purchase_item(itemPrice, startingMoney, quantityToPurchase=1):
       Returns:
         A tuple containing the number of items purchased and the leftover money.
     """
-    num_purchased = int((startingMoney/itemPrice)-quantityToPurchase)
-    leftover_money = (startingMoney - (itemPrice * quantityToPurchase))
+    # Ensure item price is positive
+    if itemPrice <= 0:
+        raise ValueError("Item price must be greater than zero.")
+    
+    # Ensure starting money is non-negative
+    if startingMoney < 0:
+        raise ValueError("Starting money cannot be negative.")
+    
+    # Calculate the maximum possible items that can be purchased
+    max_possible_purchase = startingMoney // itemPrice
+
+    # Ensure requested quantity does not exceed maximum possible purchases
+    if quantityToPurchase < 1:
+        raise ValueError("Quantity to purchase must be at least 1.")
+    elif quantityToPurchase > max_possible_purchase:
+        raise ValueError(f"You cannot purchase more than {max_possible_purchase} items with the available money.")
+
+    num_purchased = quantityToPurchase
+    leftover_money = startingMoney - (itemPrice * num_purchased)
+    
     return (num_purchased, leftover_money)
-
-num_purchased, leftover_money = purchase_item(2, 24, 6)
-print('You were able to purchase:',num_purchased,'items.')
-print('You have ${} afterwards.'.format(leftover_money))
-
-num_purchased, leftover_money = purchase_item(3, 15, 4)
-print('You were able to purchase:',num_purchased,'items.')
-print('You have ${} afterwards.'.format(leftover_money))
-
-num_purchased, leftove_money = purchase_item(1.5, 18, 9)
-print('You were able to purchase:',num_purchased,'items.')
-print('You have ${} afterwards.'.format(leftover_money))
 
 
 #Function that uses random to choose a monster from a dictionary list and outputs that monster and all of its attributes, 3 of which are also randomized each time.
@@ -102,16 +108,7 @@ def new_random_monster():
 
     return monster
 
-monster = new_random_monster()
-print('Name:',monster['name'])
-print('Description:',monster['description'])
-print('Health:',monster['health'])
-print('Power:',monster['power'])
-print('Money:',monster['money'])
-
-
 #Function that prints a welcome message for 3 names, which is centered and in single quotes. 
-
 
 def print_welcome(name, width=20):
   """Prints a welcome message for the given name, centered within a specified width.
@@ -131,11 +128,6 @@ def print_welcome(name, width=20):
   messageCentered = f"{'Hello, ' + name + '!':^{20}}"
   print(messageCentered)
   return None
-
-print_welcome('Jeff')
-print_welcome('Audrey', 30)
-print_welcome('Ludacris', 15)
-
 
 #Function that prints a shop menu with the correct alligments, decimal counts, and border format
 
@@ -175,6 +167,31 @@ def print_shop_menu(item1_name, item1_price, item2_name, item2_price):
     print('| {:<{}s} {:>8}  |'.format(item2_name, max_name_length, formatted_price2))
     print('\\' + '-' * (max_name_length + 12) + '/')
 
-print_shop_menu('Apple', 3.99, 'Orange', 2.50)
-print_shop_menu('Banana', 1.29, 'Grapefruit', 4.99)
+if __name__ == "__main__":
+    
+    num_purchased, leftover_money = purchase_item(2, 24, 6)
+    print('You were able to purchase:',num_purchased,'items.')
+    print('You have ${} afterwards.'.format(leftover_money))
+
+    num_purchased, leftover_money = purchase_item(3, 15, 4)
+    print('You were able to purchase:',num_purchased,'items.')
+    print('You have ${} afterwards.'.format(leftover_money))
+
+    num_purchased, leftove_money = purchase_item(1.5, 18, 9)
+    print('You were able to purchase:',num_purchased,'items.')
+    print('You have ${} afterwards.'.format(leftover_money))
+
+    monster = new_random_monster()
+    print('Name:',monster['name'])
+    print('Description:',monster['description'])
+    print('Health:',monster['health'])
+    print('Power:',monster['power'])
+    print('Money:',monster['money'])
+
+    print_welcome('Jeff')
+    print_welcome('Audrey', 30)
+    print_welcome('Ludacris', 15)
+
+    print_shop_menu('Apple', 3.99, 'Orange', 2.50)
+    print_shop_menu('Banana', 1.29, 'Grapefruit', 4.99)
 
