@@ -2,12 +2,6 @@ from gamefunctions import new_random_monster
 import json
 import os
 
-itemInventory = [
-                 {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
-                 {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10, 'quantity': 3},
-                 {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.', 'quantity': 1}
-                ]
-
 # Save the game to your file 
 def saveGame(fileName, itemInventory, playerHealth, playerGold, equippiedItems, swordDurability):
     """
@@ -24,7 +18,7 @@ def saveGame(fileName, itemInventory, playerHealth, playerGold, equippiedItems, 
     Returns:
         None
     """
-    
+
     gameData = {
         'itemInventory': itemInventory,
         'playerHealth': playerHealth,
@@ -71,18 +65,42 @@ def loadGame(fileName):
 
 def main():
     """
-    Main function to start the game. It generates a random monster,
+    Main function to start/load the game. It generates a random monster,
     displays its information, and enters a loop where the player can
     interact with the monster by fighting, sleeping to restore health,
     or quitting the game.
     """
+
     print('Welcome to my Adventure Game!') # Ask the player if they already have a game started
     choice = input('Would you like to 1) Start a new game or 2) Load a saved game?')
 
     if choice == '2':
         fileName = input("Enter the filename to load the game (e.g., 'save.json'): ")
         gameData = loadGame(fileName)
-        if gameData = itemInventory, playerHealth, playerGold, equippiedItems, swordDurability = gameData
+        if gameData:
+            itemInventory, playerHealth, playerGold, equippiedItems, swordDurability = gameData
+        else:
+            # If no saved game is found, start a new game
+            itemInventory = [
+                {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
+                {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10, 'quantity': 3},
+                {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.', 'quantity': 1}
+            ]
+            playerHealth = 100
+            playerGold = 10
+            equippiedItems = []
+            swordDurability = itemInventory[0]['currentDurability']
+    else:  # Start a new game
+        itemInventory = [
+            {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
+            {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10, 'quantity': 3},
+            {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.', 'quantity': 1}
+        ]
+        playerHealth = 100
+        playerGold = 10
+        equippiedItems = []
+        swordDurability = itemInventory[0]['currentDurability']
+    
 
     # Generate a random monster
     monster = new_random_monster()
@@ -92,11 +110,6 @@ def main():
     print(f'Power: {monster["power"]}')
     print(f'Money: {monster["money"]}')
 
-    playerHealth = 100  # Set players base health
-    playerGold = 10  # Set player's gold 
-    equippiedItems = [] # Set list to keep track of items
-    playerAttackPower = 10  # Default attack power
-    swordDurability = itemInventory[0]['currentDurability']  # Set initial sword durability
     monsterDefeated = False # Sets a variable to determine if the monster has already been killed i.e Magic Potion
 
     while True:
@@ -138,6 +151,10 @@ def main():
 
         elif choice == '5':
             print('You chose to quit. Goodbye!!')
+            saveChoice = input('Would you like to save the game before quitting? (yes/no): ')
+            if saveChoice.lower() == 'yes':
+                fileName = input("Enter the filename to save the game (e.g., 'save.json'): ")
+                saveGame(fileName, itemInventory, playerHealth, playerGold, equippiedItems, swordDurability)
             break
 
         else:
