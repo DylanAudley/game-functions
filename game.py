@@ -72,7 +72,7 @@ def main():
     """
 
     print('Welcome to my Adventure Game!') # Ask the player if they already have a game started
-    choice = input('Would you like to 1) Start a new game or 2) Load a saved game?')
+    choice = input('Would you like to 1) Start a new game or 2) Load a saved game: ')
 
     if choice == '2':
         fileName = input("Enter the filename to load the game (e.g., 'save.json'): ")
@@ -110,6 +110,7 @@ def main():
     print(f'Power: {monster["power"]}')
     print(f'Money: {monster["money"]}')
 
+    playerAttackPower = 10 # Set base player attack power to 10
     monsterDefeated = False # Sets a variable to determine if the monster has already been killed i.e Magic Potion
 
     while True:
