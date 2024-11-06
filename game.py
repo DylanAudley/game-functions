@@ -1,10 +1,73 @@
 from gamefunctions import new_random_monster
+import json
+import os
 
 itemInventory = [
                  {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
                  {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10, 'quantity': 3},
                  {'name': 'magic potion', 'type': 'potion', 'effect': 'Defeats any one monster without losing HP.', 'quantity': 1}
                 ]
+
+# Save the game to your file 
+def saveGame(fileName, itemInventory, playerHealth, playerGold, equippiedItems, swordDurability):
+    """
+    Saves the current game state to a file.
+
+    Parameters:
+        fileName (str): The name of the file to save the game state to.
+        itemInventory (list): The player's current inventory of items.
+        playerHealth (int): The player's current health.
+        playerGold (int): The player's current gold.
+        equippiedItems (list): A list of items the player has equipped.
+        swordDurability (int): The current durability of the player's sword.
+
+    Returns:
+        None
+    """
+    
+    gameData = {
+        'itemInventory': itemInventory,
+        'playerHealth': playerHealth,
+        'playerGold': playerGold,
+        'equippiedItems': equippiedItems,
+        'swordDurability': swordDurability
+    }
+    with open(fileName, 'w') as file:
+        json.dump(gameData, file)
+    print(f'Game saved to {fileName}.')
+
+# Load a previous game from your file
+def loadGame(fileName):
+    """
+    Loads the game state from a file.
+
+    Parameters:
+        fileName (str): The name of the file to load the game state from.
+
+    Returns:
+        tuple: A tuple containing the following:
+            - itemInventory (list): The player's current inventory of items.
+            - playerHealth (int): The player's current health.
+            - playerGold (int): The player's current gold.
+            - equippiedItems (list): A list of items the player has equipped.
+            - swordDurability (int): The current durability of the player's sword.
+    """
+
+    if not os.path.exists(fileName):
+        print(f'No save file found with the name {fileName}. Starting a new game.')
+        return None 
+
+    with open(fileName, 'r') as file:
+        gameData = json.load(file)
+
+    itemInventory = gameData['itemInventory']
+    playerHealth = gameData['playerHealth']
+    playerGold = gameData['playerGold']
+    equippiedItems = gameData['equippiedItems']
+    swordDurability = gameData['swordDurability']
+
+    print(f'Game loaded from {fileName}.')
+    return itemInventory, playerHealth, playerGold, equippiedItems, swordDurability
 
 def main():
     """
@@ -13,7 +76,14 @@ def main():
     interact with the monster by fighting, sleeping to restore health,
     or quitting the game.
     """
-    
+    print('Welcome to my Adventure Game!') # Ask the player if they already have a game started
+    choice = input('Would you like to 1) Start a new game or 2) Load a saved game?')
+
+    if choice == '2':
+        fileName = input("Enter the filename to load the game (e.g., 'save.json'): ")
+        gameData = loadGame(fileName)
+        if gameData = itemInventory, playerHealth, playerGold, equippiedItems, swordDurability = gameData
+
     # Generate a random monster
     monster = new_random_monster()
     print(f'A wild {monster["name"]} appears!')
