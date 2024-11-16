@@ -6,13 +6,19 @@ pygame.init()
 GRID_SIZE = 10
 CELL_SIZE = 32
 WINDOW_SIZE = GRID_SIZE * CELL_SIZE
-SCREEN_WIDTH = 320
-SCREEN_HEIGHT = 320
+SCREEN_WIDTH = SCREEN_HEIGHT = 320
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 BLACK = (0, 0, 0)
+FONT_COLOR = (0, 0, 0)  # Color for text (black)
+
+# Screen setup
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Game Grid")
+
+# Font setup
+font = pygame.font.SysFont("Times New Roman", 24)
 
 #Set player position at the 0,0 left corner
 player_pos = pygame.Rect(0, 0, CELL_SIZE, CELL_SIZE)
@@ -31,6 +37,7 @@ def handleInteraction():
         print("You have entered the Shop. Do you want to buy the swashbuckler sword?")
     elif player_pos.colliderect(encounter_pos):
         print("A wild monster randomly appears!")
+    return None
     
 def drawGrid():
     """
@@ -54,6 +61,13 @@ def drawGameElements():
 
     # Draw random encounter (red circle)
     pygame.draw.circle(screen, RED, encounter_pos.center, CELL_SIZE // 2)
+
+def draw_text(text, position):
+    """
+    Draws the provided text on the screen at the given position.
+    """
+    text_surface = font.render(text, True, FONT_COLOR)
+    screen.blit(text_surface, position)
 
 #Game Loop code
 running = True
@@ -80,8 +94,11 @@ while running:
             elif event.key == pygame.K_RIGHT and player_pos.right < WINDOW_SIZE:
                 player_pos.move_ip(CELL_SIZE, 0)  # Move right
 
-    handleInteraction() # Call in interactions with shop and rand monster
+    interactionMessage = handleInteraction()
 
+    # Display interaction message (if any)
+    if interactionMessage:
+        draw_text(interactionMessage, (10, 10))  # Draw text at the top left
     pygame.display.flip() # Update display
 
     pygame.time.Clock().tick(10) # Frame rate (FPS)
