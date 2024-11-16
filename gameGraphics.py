@@ -55,12 +55,38 @@ def drawGameElements():
     # Draw random encounter (red circle)
     pygame.draw.circle(screen, RED, encounter_pos.center, CELL_SIZE // 2)
 
+#Game Loop code
 running = True
 while running: 
+    screen.fill(WHITE) #Set background screen as white
+
+    drawGrid() # Draw grid
+
+    drawGameElements() # Draw player, shop, and random monster encounter
+    
+    # Code handling keyboard interaction with player movement
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q:
+                running = False
+            elif event.key == pygame.K_UP and player_pos.top > 0:
+                player_pos.move_ip(0, -CELL_SIZE)  # Move up
+            elif event.key == pygame.K_DOWN and player_pos.bottom < WINDOW_SIZE:
+                player_pos.move_ip(0, CELL_SIZE)  # Move down
+            elif event.key == pygame.K_LEFT and player_pos.left > 0:
+                player_pos.move_ip(-CELL_SIZE, 0)  # Move left
+            elif event.key == pygame.K_RIGHT and player_pos.right < WINDOW_SIZE:
+                player_pos.move_ip(CELL_SIZE, 0)  # Move right
 
-pygame.quit()
+    handleInteraction() # Call in interactions with shop and rand monster
+
+    pygame.display.flip() # Update display
+
+    pygame.time.Clock().tick(10) # Frame rate (FPS)
+
+
+pygame.quit() # Guit game failsafe 
 
 
