@@ -68,7 +68,7 @@ shop_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randin
 encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
 def handleInteraction():
-     """
+    """
     Handles interactions when the player collides with the shop or random encounter.
     If the player moves to the shop's location, a shop interaction message is displayed.
     If the player moves to the random encounter's location, a random monster encounter message is displayed.
@@ -76,8 +76,6 @@ def handleInteraction():
     Returns:
         str: The interaction message to be displayed on screen.
     """
-    global player
-    
     if player_pos.colliderect(shop_pos):
         print("You have entered the Shop.")
         print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
@@ -87,6 +85,7 @@ def handleInteraction():
         action = input("Do you want to buy a Milkshake for 3.50 (yes/no)? ")
         if action.lower() == 'yes':
             player.buy_item('Milkshake', 3.50)
+        
         return "You are in the Shop. Do you want to make a purchase?"
 
     elif player_pos.colliderect(encounter_pos):
@@ -105,6 +104,8 @@ def handleInteraction():
             print("You are too weak to fight!")
             
         return f"Encountered {monster['name']}! Health: {monster['health']}"
+    
+    return None
 
 def drawGrid():
     """
@@ -178,9 +179,9 @@ while running:
     if interactionMessage:
         draw_text(interactionMessage, (10, 10))  # Draw text at the top left
 
-    draw_text(f"Health: {player_health}", (10, 40))
-    draw_text(f"Gold: {player_gold:.2f}", (10, 70))
-    draw_text(f"Inventory: {', '.join(equipped_items) if equipped_items else 'None'}", (10, 100))
+    draw_text(f"Health: {player.health}", (10, 40))
+    draw_text(f"Gold: {player.gold:.2f}", (10, 70))
+    draw_text(f"Inventory: {', '.join(player.equipped_items) if player.equipped_items else 'None'}", (10, 100))
 
     pygame.display.flip() # Update display
 
