@@ -71,6 +71,8 @@ encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.r
 monsterEncounter = False
 # Same variable method for the shop
 shopEncounter = False
+# message displayed on graphics screen when encounting monster 
+encounterMessage = ""
 
 def handleInteraction():
     """
@@ -81,12 +83,14 @@ def handleInteraction():
     Returns:
         str: The interaction message to be displayed on screen.
     """
-    global monsterEncounter, shopEncounter
+    global monsterEncounter, shopEncounter, encounterMessage
     
     if player_pos.colliderect(shop_pos) and not shopEncounter:
         print("You have entered the Shop.")
         print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
     
+        shopEncounter = True
+
         return "Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop."
 
     elif player_pos.colliderect(encounter_pos) and not monsterEncounter:
@@ -103,9 +107,10 @@ def handleInteraction():
             if player.health <= 0:
                 print("You have been defeated!")
 
+        encounterMessage = f"Encountered {monster['name']}! Health: {monster['health']}"
         monsterEncounter = True
             
-        return f"Encountered {monster['name']}! Health: {monster['health']}"
+        return encounterMessage
     
     return None
 
@@ -174,6 +179,13 @@ while running:
                 player_pos.move_ip(-CELL_SIZE, 0)  # Move left
             elif event.key == pygame.K_RIGHT and player_pos.right < WINDOW_SIZE:
                 player_pos.move_ip(CELL_SIZE, 0)  # Move right
+            elif event.key == pygame.K_1 and player_pos.colliderect(shop_pos) and not shopEncounter:
+                player.buy_item('Swashbuckler Sword', 5.99)
+            elif event.key == pygame.K_2 and player_pos.colliderect(shop_pos) and not shopEncounter:
+                player.buy_item('Milkshake', 3.50)
+            elif event.key == pygame.K_3 and player_pos.colliderect(shop_pos) and not shopEncounter:
+                print("You have exited the shop.")
+                shopEncounter = True # Preventing bugs
 
     interactionMessage = handleInteraction()
 
@@ -184,6 +196,10 @@ while running:
     draw_text(f"Health: {player.health}", (10, 40))
     draw_text(f"Gold: {player.gold:.2f}", (10, 70))
     draw_text(f"Inventory: {', '.join(player.equipped_items) if player.equipped_items else 'None'}", (10, 100))
+
+    # If the player is on the monster encounter area, display the encounter message
+    if encounterMessage:
+        draw_text(encounterMessage, (10, 130))  # Display monster encounter message
 
     pygame.display.flip() # Update display
 
