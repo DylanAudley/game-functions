@@ -69,6 +69,8 @@ encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.r
 
 # Variable to track whether or not player has already encountered a random monster, fix for non-stop random monsters
 monsterEncounter = False
+# Same variable method for the shop
+shopEncounter = False
 
 def handleInteraction():
     """
@@ -79,9 +81,9 @@ def handleInteraction():
     Returns:
         str: The interaction message to be displayed on screen.
     """
-    global monsterEncounter
+    global monsterEncounter, shopEncounter
     
-    if player_pos.colliderect(shop_pos):
+    if player_pos.colliderect(shop_pos) and not shopEncounter:
         print("You have entered the Shop.")
         print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
     
