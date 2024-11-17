@@ -20,7 +20,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Game Grid")
 
 # Font setup
-font = pygame.font.SysFont("Times New Roman", 24)
+font = pygame.font.SysFont("Times New Roman", 12)
 
 # Player class to encapsulate all player data
 class Player:
@@ -67,6 +67,9 @@ player_pos = pygame.Rect(0, 0, CELL_SIZE, CELL_SIZE)
 shop_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
+# Variable to track whether or not player has already encountered a random monster, fix for non-stop random monsters
+monsterEncounter = False
+
 def handleInteraction():
     """
     Handles interactions when the player collides with the shop or random encounter.
@@ -76,19 +79,16 @@ def handleInteraction():
     Returns:
         str: The interaction message to be displayed on screen.
     """
+    global monsterEncounter
+    
     if player_pos.colliderect(shop_pos):
         print("You have entered the Shop.")
         print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
-        action = input("Do you want to buy the Swashbuckler Sword for 5.99 (yes/no)? ")
-        if action.lower() == 'yes':
-            player.buy_item('Swashbuckler Sword', 5.99)
-        action = input("Do you want to buy a Milkshake for 3.50 (yes/no)? ")
-        if action.lower() == 'yes':
-            player.buy_item('Milkshake', 3.50)
-        
-        return "You are in the Shop. Do you want to make a purchase?"
+    
+        return "Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop."
 
-    elif player_pos.colliderect(encounter_pos):
+    elif player_pos.colliderect(encounter_pos) and not monsterEncounter:
+        
         print("A wild monster randomly appears!")
         monster = new_random_monster()
         print(f"Monster Name: {monster['name']}")
@@ -100,8 +100,8 @@ def handleInteraction():
             print(f"You took damage! Current health: {player.health}")
             if player.health <= 0:
                 print("You have been defeated!")
-        else:
-            print("You are too weak to fight!")
+
+        monsterEncounter = True
             
         return f"Encountered {monster['name']}! Health: {monster['health']}"
     
