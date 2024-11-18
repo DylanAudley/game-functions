@@ -102,6 +102,7 @@ def itemShop():
     print("Press '2' to buy Milkshake for 3.50 gold.")
     print("Press '3' to exit the shop.")
     validInput = False
+    lastPosition = player_pos.copy()
     while not validInput:
         userInput = input("Choose and option 1, 2, or 3: ").strip()
         
@@ -127,6 +128,8 @@ def itemShop():
             valid_input = True
         elif userInput == '3':
             print("Exiting shop.")
+            player_pos.x = lastPosition.x
+            player_pos.y = lastPosition.y
             valid_input = True
         else:
             print("Invalid choice. Please enter '1', '2', or '3'.")
