@@ -1,5 +1,6 @@
 import pygame
 import random
+import time
 from gamefunctions import new_random_monster, print_shop_menu
 
 
@@ -78,6 +79,10 @@ shopEncounter = False
 # message displayed on graphics screen when encounting monster 
 encounterMessage = ""
 
+# Store the time when the interaction message is triggered
+interactionMessageTime = None
+interactionMessageDuration = 3  # Message will stay for 3 seconds
+
 def handleInteraction():
     """
     Handles interactions when the player collides with the shop or random encounter.
@@ -87,7 +92,7 @@ def handleInteraction():
     Returns:
         str: The interaction message to be displayed on screen.
     """
-    global monsterEncounter, shopEncounter, encounterMessage
+    global monsterEncounter, shopEncounter, encounterMessage, interactionMessageTime
     
     if player_pos.colliderect(shop_pos) and not shopEncounter:
         print("You have entered the Shop. Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop.")
@@ -109,9 +114,12 @@ def handleInteraction():
 
         encounterMessage = f"Encountered {monster['name']}! Health: {monster['health']}"
         monsterEncounter = True
+
+        # Start the timer for the encounter message
+        interactionMessageTime = time.time()  # Trigger the timer when the encounter happens
             
         return encounterMessage
-    shopEncounter = True
+    
     return None
 
 def drawGrid():
