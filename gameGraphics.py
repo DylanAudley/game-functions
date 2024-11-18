@@ -92,7 +92,7 @@ def handleInteraction():
     if player_pos.colliderect(shop_pos) and not shopEncounter:
         print("You have entered the Shop. Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop.")
         print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
-        return ''
+        shopEncounter = True
 
     elif player_pos.colliderect(encounter_pos) and not monsterEncounter:
         print("A wild monster randomly appears!")
@@ -111,7 +111,7 @@ def handleInteraction():
         monsterEncounter = True
             
         return encounterMessage
-    
+    shopEncounter = True
     return None
 
 def drawGrid():
