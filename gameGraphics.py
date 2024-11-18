@@ -34,6 +34,10 @@ class Player:
         ]
 
     def buy_item(self, item_name, cost):
+        """
+        Buy an item if the player has enough gold. 
+        Adds the item to the inventory or equipment list accordingly.
+        """
         if self.gold >= cost:
             self.gold -= cost
             if item_name == 'Swashbuckler Sword':
@@ -86,15 +90,14 @@ def handleInteraction():
     global monsterEncounter, shopEncounter, encounterMessage
     
     if player_pos.colliderect(shop_pos) and not shopEncounter:
-        print("You have entered the Shop.")
+        choice = input("You have entered the Shop. Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop.")
         print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
-    
-        shopEncounter = True
+        if choice == 1:
 
-        return "Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop."
+    
+    shopEncounter = True
 
     elif player_pos.colliderect(encounter_pos) and not monsterEncounter:
-        
         print("A wild monster randomly appears!")
         monster = new_random_monster()
         print(f"Monster Name: {monster['name']}")
