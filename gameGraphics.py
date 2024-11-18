@@ -90,11 +90,10 @@ def handleInteraction():
     global monsterEncounter, shopEncounter, encounterMessage
     
     if player_pos.colliderect(shop_pos) and not shopEncounter:
-        choice = input("You have entered the Shop. Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop.")
+        print("You have entered the Shop. Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop.")
         print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
-        if choice == 1:
+        return ''
 
-    
     shopEncounter = True
 
     elif player_pos.colliderect(encounter_pos) and not monsterEncounter:
