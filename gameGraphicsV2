@@ -29,10 +29,6 @@ class Player:
         self.health = 100
         self.gold = 10
         self.equipped_items = []
-        self.item_inventory = [
-            {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
-            {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10, 'quantity': 3}
-        ]
 
 
 # Initialize player
@@ -44,13 +40,6 @@ player_pos = pygame.Rect(0, 0, CELL_SIZE, CELL_SIZE)
 # Shop and Random Encounter Positions (randomly placed)
 shop_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-
-# message displayed on graphics screen when encounting monster 
-encounterMessage = ""
-
-# Store the time when the interaction message is triggered
-interactionMessageTime = None
-interactionMessageDuration = 3  # Message will stay for 3 seconds
 
 def drawGrid():
     """
@@ -98,31 +87,39 @@ def itemShop():
     Function to handle when the player is on the shop circle, able to take input to buy items
     """
     print("You have entered the shop.")
-    print("Press '1' to buy Swashbuckler Sword for 5.99 gold.")
-    print("Press '2' to buy Milkshake for 3.50 gold.")
+
+    shop_inventory = [
+        {'name': 'Swashbuckler Sword', 'type': 'weapon', 'price': 5.99},
+        {'name': 'Milkshake', 'type': 'healthBoost', 'price': 3.50}
+    ]
+    # Display available items in the shop
+    for idx, item in enumerate(shop_inventory, 1):
+        print(f"Press '{idx}' to buy {item['name']} for {item['price']} gold.")
     print("Press '3' to exit the shop.")
+
     validInput = False
     lastPosition = player_pos.copy()
+
     while not validInput:
         userInput = input("Choose and option 1, 2, or 3: ").strip()
         
-        if userInput == '1':
-            if player.gold >= 5.99:
-                player.gold -= 5.99
-                player.equipped_items.append('Swashbuckler Sword')
-                print("You purchased Swashbuckler Sword!")
+        if userInput == '1' and len(shop_inventory) >= 1:
+            item = shop_inventory[0]
+            if player.gold >= item['price']:
+                player.gold -= item['price']
+                player.equipped_items.append(['name'])
+                print("You purchased {item['name']}!")
+                shop_inventory.pop(0)  # Remove item from shop inventory
             else:
                 print("Not enough gold to purchase Swashbuckler Sword.")
             valid_input = True
-        elif userInput == '2':
-            if player.gold >= 3.50:
-                player.gold -= 3.50
-                # Search for an existing milkshake in inventory
-                for item in player.item_inventory:
-                    if item['name'] == 'milkshake':
-                        item['quantity'] += 1
-                        break
-                print("You purchased Milkshake!")
+        elif userInput == '2' and len(shop_inventory) >= 1:
+            item = shop_inventory[1]
+            if player.gold >= item['price']:
+                player.gold -= item['price']
+                player.equipped_items.append(['name'])
+                print("You purchased {item['name']}!")
+                shop_inventory.pop(1)
             else:
                 print("Not enough gold to purchase Milkshake.")
             valid_input = True
@@ -167,10 +164,6 @@ while running:
     draw_text(f"Health: {player.health}", (10, 40))
     draw_text(f"Gold: {player.gold:.2f}", (10, 70))
     draw_text(f"Inventory: {', '.join(player.equipped_items) if player.equipped_items else 'None'}", (10, 100))
-
-    # If the player is on the monster encounter area, display the encounter message
-    if encounterMessage:
-        draw_text(encounterMessage, (10, 130))  # Display monster encounter message
 
     pygame.display.flip() # Update display
 
