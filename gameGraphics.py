@@ -94,8 +94,6 @@ def handleInteraction():
         print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
         return ''
 
-    shopEncounter = True
-
     elif player_pos.colliderect(encounter_pos) and not monsterEncounter:
         print("A wild monster randomly appears!")
         monster = new_random_monster()
