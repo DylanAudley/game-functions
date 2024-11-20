@@ -89,6 +89,9 @@ player_pos = pygame.Rect(0, 0, CELL_SIZE, CELL_SIZE)
 # Create a monster
 monster = WanderingMonster()
 
+# Create the shop randomly placed
+shop_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+
 # Message display timer
 encounter_message_time = None
 
