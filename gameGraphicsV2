@@ -184,6 +184,7 @@ def itemShop():
             print("Exiting shop.")
             player_pos.x = lastPosition.x
             player_pos.y = lastPosition.y
+            player.exit_shop() # Exit the shop
             validInput = True
         else:
             print("Invalid choice. Please enter '1', '2', or '3'.")
@@ -231,13 +232,13 @@ while running:
     if monster.check_encounter(player_pos):
         player.health -= 10  # Decrease player health by 10
         encounter_message_time = time.time()  # Track the time the encounter happens
-        print(f"A wild {monster.name} appears! Player loses 10 health.")
+        print(f"A wild {monster.name} attacks! You lose 10 health!")
 
     # Display encounter message for a few seconds
     if encounter_message_time:
         elapsed_time = time.time() - encounter_message_time
         if elapsed_time < 3:  # Show message for 3 seconds
-            draw_text(f"A wild {monster.name} appears!", (10, 10))
+            draw_text(f"A wild {monster.name} attacks! You lose 10 HP!", (10, 10))
         else:
             encounter_message_time = None  # Reset encounter message timer
 
