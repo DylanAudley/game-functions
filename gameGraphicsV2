@@ -1,8 +1,7 @@
 import pygame
 import random
 import time
-from gamefunctions import new_random_monster, print_shop_menu
-from game import fightMonster
+from gamefunctions import print_shop_menu
 
 
 pygame.init()
@@ -81,20 +80,14 @@ class WanderingMonster:
         # Check if the player is in the same position as the monster
         return self.rect.colliderect(player_rect)
 
-    def get_monster_info(self):
-        # Return a dictionary that matches the format required by fightMonster
-        return {
-            "name": self.name,
-            "health": self.health,
-            "power": self.attack_power
-        }
-
-
 # Initialize player
 player = Player()
 
 #Set player position at the 0,0 left corner
 player_pos = pygame.Rect(0, 0, CELL_SIZE, CELL_SIZE)
+
+# Create a monster
+monster = WanderingMonster()
 
 # Shop and Random Encounter Positions (randomly placed)
 shop_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
@@ -105,9 +98,6 @@ while shop_pos.colliderect(player_pos):
     shop_pos = pygame.Rect(random.randint(0, GRID_SIZE - 1) * CELL_SIZE, random.randint(0, GRID_SIZE - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 while encounter_pos.colliderect(player_pos):
     encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE - 1) * CELL_SIZE, random.randint(0, GRID_SIZE - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-
-# Create a list of monsters
-monsters = [WanderingMonster(), WanderingMonster()]
 
 def drawGrid():
     """
@@ -133,8 +123,8 @@ def drawGameElements():
     # Draw shop (green circle)
     pygame.draw.circle(screen, GREEN, shop_pos.center, CELL_SIZE // 2)
 
-    # Draw random encounter (red circle)
-    pygame.draw.circle(screen, RED, encounter_pos.center, CELL_SIZE // 2)
+    # Draw the monster (red circle)
+    pygame.draw.circle(screen, RED, monster.rect.center, CELL_SIZE // 2)
 
 def draw_text(text, position):
     """
@@ -212,7 +202,11 @@ while running:
     drawGrid() # Draw grid
 
     drawGameElements() # Draw player, shop, and random monster encounter
-    
+
+    # Move the monster randomly
+    monster.move()
+    print(f"Monster moved to position: ({monster.x}, {monster.y})")  # Debugging the monster's position
+
     # Code handling keyboard interaction with player movement
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -236,6 +230,14 @@ while running:
     draw_text(f"Health: {player.health}", (10, 40))
     draw_text(f"Gold: {player.gold:.2f}", (10, 70))
     draw_text(f"Inventory: {', '.join(player.equipped_items) if player.equipped_items else 'None'}", (10, 100))
+
+    # Check if the player and the monster are on the same square
+    if monster.check_encounter(player_pos):
+        draw_text(f"A wild {monster.name} appears!", (10, 10))
+        print(f"A wild {monster.name} appears!")
+    else:
+        # Debugging if there's no encounter
+        print("No encounter yet.")
 
     pygame.display.flip() # Update display
 
