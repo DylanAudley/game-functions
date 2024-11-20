@@ -202,8 +202,7 @@ while running:
 
     # Move the monster randomly
     monster.move()
-    print(f"Monster moved to position: ({monster.x}, {monster.y})")  # Debugging the monster's position
-
+    
     # Code handling keyboard interaction with player movement
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
