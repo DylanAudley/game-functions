@@ -108,20 +108,20 @@ def itemShop():
             if player.gold >= item['price']:
                 player.gold -= item['price']
                 player.equipped_items.append(item['name'])
-                print("You purchased {item['name']}!")
+                print(f"You purchased {item['name']}!")
                 shop_inventory.pop(0)  # Remove item from shop inventory
             else:
-                print("Not enough gold to purchase {item['name']}.")
+                print(f"Not enough gold to purchase {item['name']}.")
             validInput = True
         elif userInput == '2' and len(shop_inventory) >= 1:
             item = shop_inventory[1]
             if player.gold >= item['price']:
                 player.gold -= item['price']
                 player.equipped_items.append(item['name'])
-                print("You purchased {item['name']}!")
+                print(f"You purchased {item['name']}!")
                 shop_inventory.pop(1)
             else:
-                print("Not enough gold to purchase {item['name']}.")
+                print(f"Not enough gold to purchase {item['name']}.")
             validInput = True
         elif userInput == '3':
             print("Exiting shop.")
