@@ -50,6 +50,7 @@ class WanderingMonster:
         self.y = random.randint(0, GRID_SIZE - 1)
         self.rect = pygame.Rect(self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
+        monster_data = random.choice(monsterList)
 
     def move(self):
         # Randomly move the monster in one of 4 directions, staying within bounds
@@ -89,6 +90,12 @@ player_pos = pygame.Rect(0, 0, CELL_SIZE, CELL_SIZE)
 # Shop and Random Encounter Positions (randomly placed)
 shop_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+
+# Ensure the shop and encounter positions are not overlapping with the player position
+while shop_pos.colliderect(player_pos):
+    shop_pos = pygame.Rect(random.randint(0, GRID_SIZE - 1) * CELL_SIZE, random.randint(0, GRID_SIZE - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+while encounter_pos.colliderect(player_pos):
+    encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE - 1) * CELL_SIZE, random.randint(0, GRID_SIZE - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
 def drawGrid():
     """
@@ -176,19 +183,25 @@ def itemShop():
             print("Exiting shop.")
             player_pos.x = lastPosition.x
             player_pos.y = lastPosition.y
-            valid_input = True
+            validInput = True
         else:
             print("Invalid choice. Please enter '1', '2', or '3'.")
 
 
 #Game Loop code
 running = True
+monsters = [WanderingMonster(), WanderingMonster()]
+
 while running: 
     screen.fill(WHITE) #Set background screen as white
 
     drawGrid() # Draw grid
 
     drawGameElements() # Draw player, shop, and random monster encounter
+
+    # Move monsters
+    for monster in monsters:
+        monster.move()
     
     # Code handling keyboard interaction with player movement
     for event in pygame.event.get():
