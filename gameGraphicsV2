@@ -30,13 +30,23 @@ class Player:
         self.health = 100
         self.gold = 10
         self.equipped_items = []
+        self.in_shop = False  # Track whether the player is in the shop
+
+    def enter_shop(self):
+        self.in_shop = True
+
+    def exit_shop(self):
+        self.in_shop = False
 
 class WanderingMonster:
     def __init__(self):
         # Randomly pick the monster and characteristics from list
         monsterList = [{'name': 'goblin', 'description': 'A sneaky little guy, grabbing your gold.', 'health': [12, 14, 16], 'power': [1, 2, 3], 'money' : [20, 22, 24]},
                    {'name': 'troll', 'health': [15, 18, 21], 'description' : 'A grumpy bridge troll who has a huge wooden club.', 'power' : [25, 30, 35], 'money' : [8, 10, 12]},
-                   {'name' : 'George the Giant', 'description' : 'Typically a gentle giant, but has quite a sensitive temper.', 'health': [1000, 1200, 1400], 'power' : [100, 120, 140], 'money' : [3, 5, 7]}]
+                   {'name' : 'George the Giant', 'description' : 'Typically a gentle giant, but has quite a sensitive temper.', 'health': [1000, 1200, 1400], 'power' : [100, 120, 140], 'money' : [3, 5, 7]}
+                   ]
+
+        monster_data = random.choice(monsterList)
 
         # Randomize the health, power, and money based on the monster's stats in list
         self.name = monster_data['name']
@@ -50,7 +60,6 @@ class WanderingMonster:
         self.y = random.randint(0, GRID_SIZE - 1)
         self.rect = pygame.Rect(self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
-        monster_data = random.choice(monsterList)
 
     def move(self):
         # Randomly move the monster in one of 4 directions, staying within bounds
@@ -97,6 +106,9 @@ while shop_pos.colliderect(player_pos):
 while encounter_pos.colliderect(player_pos):
     encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE - 1) * CELL_SIZE, random.randint(0, GRID_SIZE - 1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
+# Create a list of monsters
+monsters = [WanderingMonster(), WanderingMonster()]
+
 def drawGrid():
     """
     Draws the 10x10 grid on the screen. Each cell is 32x32 pixels.
@@ -142,7 +154,10 @@ def itemShop():
     """
     Function to handle when the player is on the shop circle, able to take input to buy items
     """
-    print("You have entered the shop.")
+    if not player.in_shop:  # Check if player is not already in the shop
+        print("You have entered the shop.")
+        player.enter_shop()  # Mark the player as in the shop
+
 
     shop_inventory = [
         {'name': 'Swashbuckler Sword', 'type': 'weapon', 'price': 5.99},
@@ -190,7 +205,6 @@ def itemShop():
 
 #Game Loop code
 running = True
-monsters = [WanderingMonster(), WanderingMonster()]
 
 while running: 
     screen.fill(WHITE) #Set background screen as white
@@ -198,10 +212,6 @@ while running:
     drawGrid() # Draw grid
 
     drawGameElements() # Draw player, shop, and random monster encounter
-
-    # Move monsters
-    for monster in monsters:
-        monster.move()
     
     # Code handling keyboard interaction with player movement
     for event in pygame.event.get():
