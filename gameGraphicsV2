@@ -2,6 +2,7 @@ import pygame
 import random
 import time
 from gamefunctions import new_random_monster, print_shop_menu
+from game import fightMonster
 
 
 pygame.init()
@@ -29,6 +30,54 @@ class Player:
         self.health = 100
         self.gold = 10
         self.equipped_items = []
+
+class WanderingMonster:
+    def __init__(self):
+        # Randomly pick the monster and characteristics from list
+        monsterList = [{'name': 'goblin', 'description': 'A sneaky little guy, grabbing your gold.', 'health': [12, 14, 16], 'power': [1, 2, 3], 'money' : [20, 22, 24]},
+                   {'name': 'troll', 'health': [15, 18, 21], 'description' : 'A grumpy bridge troll who has a huge wooden club.', 'power' : [25, 30, 35], 'money' : [8, 10, 12]},
+                   {'name' : 'George the Giant', 'description' : 'Typically a gentle giant, but has quite a sensitive temper.', 'health': [1000, 1200, 1400], 'power' : [100, 120, 140], 'money' : [3, 5, 7]}]
+
+        # Randomize the health, power, and money based on the monster's stats in list
+        self.name = monster_data['name']
+        self.description = monster_data['description']
+        self.health = random.choice(monster_data['health'])
+        self.attack_power = random.choice(monster_data['power'])
+        self.money = random.choice(monster_data['money'])
+
+        # Randomize the monster's position on the grid
+        self.x = random.randint(0, GRID_SIZE - 1)
+        self.y = random.randint(0, GRID_SIZE - 1)
+        self.rect = pygame.Rect(self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+
+
+    def move(self):
+        # Randomly move the monster in one of 4 directions, staying within bounds
+        direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
+        if direction == 'UP' and self.y > 0:
+            self.y -= 1
+        elif direction == 'DOWN' and self.y < GRID_SIZE - 1:
+            self.y += 1
+        elif direction == 'LEFT' and self.x > 0:
+            self.x -= 1
+        elif direction == 'RIGHT' and self.x < GRID_SIZE - 1:
+            self.x += 1
+        
+        # Update monster's rectangle position based on the new x, y coordinates
+        self.rect.x = self.x * CELL_SIZE
+        self.rect.y = self.y * CELL_SIZE
+
+    def check_encounter(self, player_rect):
+        # Check if the player is in the same position as the monster
+        return self.rect.colliderect(player_rect)
+
+    def get_monster_info(self):
+        # Return a dictionary that matches the format required by fightMonster
+        return {
+            "name": self.name,
+            "health": self.health,
+            "power": self.attack_power
+        }
 
 
 # Initialize player
