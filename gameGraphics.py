@@ -263,15 +263,13 @@ while running:
         else:
             draw_text("Press M to double the monsters, or Q to quit.", (100, 150))
 
-    # If all monsters are defeated, double the monsters
-    if gameOver:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_m):
-                # Reset player health and monsters
-                player.health = 100
-                monsters = spawn_monsters(monster_count * 2)  # Double the number of monsters
-                gameOver = False
-                monster_count *= 2
+    # Check if key 'M' was pressed to double the monsters
+    if not gameOver and pygame.key.get_pressed()[pygame.K_m]:
+        # Double the number of monsters and reset player health
+        monster_count *= 2  # Double the monster count
+        monsters = spawn_monsters(monster_count)  # Spawn new set of monsters
+        player.health = 100  # Reset player health
+        print("Monsters doubled and health reset!")
     
     # User input quit logic
     if gameOver:
