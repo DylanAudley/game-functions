@@ -1,7 +1,7 @@
 import pygame
 import random
 import time
-from gamefunctions import new_random_monster, print_shop_menu
+from gamefunctions import print_shop_menu
 
 
 pygame.init()
@@ -29,38 +29,56 @@ class Player:
         self.health = 100
         self.gold = 10
         self.equipped_items = []
-        self.item_inventory = [
-            {'name': 'swashbuckler sword', 'type': 'weapon', 'minDurability': 1, 'currentDurability': 25, 'attackBoost': 10},
-            {'name': 'milkshake', 'type': 'healthBoost', 'healthRestore': 10, 'quantity': 3}
-        ]
+        self.in_shop = False  # Track whether the player is in the shop
 
-    def buy_item(self, item_name, cost):
-        """
-        Buy an item if the player has enough gold. 
-        Adds the item to the inventory or equipment list accordingly.
-        """
-        if self.gold >= cost:
-            self.gold -= cost
-            if item_name == 'Swashbuckler Sword':
-                self.equipped_items.append('Swashbuckler Sword')
-            elif item_name == 'Milkshake':
-                for item in self.item_inventory:
-                    if item['name'] == 'milkshake':
-                        item['quantity'] += 1
-                        break
-            print(f"Purchased {item_name}!")
-        else:
-            print(f"Not enough gold to purchase {item_name}.")
+    def enter_shop(self):
+        self.in_shop = True
 
-    def restore_health(self, amount):
-        self.health += amount
-        if self.health > 100:
-            self.health = 100  # Cap health at 100
+    def exit_shop(self):
+        self.in_shop = False
 
-    def take_damage(self, amount):
-        self.health -= amount
-        if self.health < 0:
-            self.health = 0
+class WanderingMonster:
+    def __init__(self):
+        # Randomly pick the monster and characteristics from list
+        monsterList = [{'name': 'goblin', 'description': 'A sneaky little guy, grabbing your gold.', 'health': [12, 14, 16], 'power': [1, 2, 3], 'money' : [20, 22, 24]},
+                   {'name': 'troll', 'health': [15, 18, 21], 'description' : 'A grumpy bridge troll who has a huge wooden club.', 'power' : [25, 30, 35], 'money' : [8, 10, 12]},
+                   {'name' : 'George the Giant', 'description' : 'Typically a gentle giant, but has quite a sensitive temper.', 'health': [1000, 1200, 1400], 'power' : [100, 120, 140], 'money' : [3, 5, 7]}
+                   ]
+
+        monster_data = random.choice(monsterList)
+
+        # Randomize the health, power, and money based on the monster's stats in list
+        self.name = monster_data['name']
+        self.description = monster_data['description']
+        self.health = random.choice(monster_data['health'])
+        self.attack_power = random.choice(monster_data['power'])
+        self.money = random.choice(monster_data['money'])
+
+        # Randomize the monster's position on the grid
+        self.x = random.randint(0, GRID_SIZE - 1)
+        self.y = random.randint(0, GRID_SIZE - 1)
+        self.rect = pygame.Rect(self.x * CELL_SIZE, self.y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+
+
+    def move(self):
+        # Randomly move the monster in one of 4 directions, staying within bounds
+        direction = random.choice(['UP', 'DOWN', 'LEFT', 'RIGHT'])
+        if direction == 'UP' and self.y > 0:
+            self.y -= 1
+        elif direction == 'DOWN' and self.y < GRID_SIZE - 1:
+            self.y += 1
+        elif direction == 'LEFT' and self.x > 0:
+            self.x -= 1
+        elif direction == 'RIGHT' and self.x < GRID_SIZE - 1:
+            self.x += 1
+        
+        # Update monster's rectangle position based on the new x, y coordinates
+        self.rect.x = self.x * CELL_SIZE
+        self.rect.y = self.y * CELL_SIZE
+
+    def check_encounter(self, player_rect):
+        # Check if the player is in the same position as the monster
+        return self.rect.colliderect(player_rect)
 
 # Initialize player
 player = Player()
@@ -68,59 +86,14 @@ player = Player()
 #Set player position at the 0,0 left corner
 player_pos = pygame.Rect(0, 0, CELL_SIZE, CELL_SIZE)
 
-# Shop and Random Encounter Positions (randomly placed)
+# Create a monster
+monster = WanderingMonster()
+
+# Create the shop randomly placed
 shop_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-encounter_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
 
-# Variable to track whether or not player has already encountered a random monster, fix for non-stop random monsters
-monsterEncounter = False
-# Same variable method for the shop
-shopEncounter = False
-# message displayed on graphics screen when encounting monster 
-encounterMessage = ""
-
-# Store the time when the interaction message is triggered
-interactionMessageTime = None
-interactionMessageDuration = 3  # Message will stay for 3 seconds
-
-def handleInteraction():
-    """
-    Handles interactions when the player collides with the shop or random encounter.
-    If the player moves to the shop's location, a shop interaction message is displayed.
-    If the player moves to the random encounter's location, a random monster encounter message is displayed.
-    
-    Returns:
-        str: The interaction message to be displayed on screen.
-    """
-    global monsterEncounter, shopEncounter, encounterMessage, interactionMessageTime
-    
-    if player_pos.colliderect(shop_pos) and not shopEncounter:
-        print("You have entered the Shop. Press '1' to buy Swashbuckler Sword (5.99), '2' to buy Milkshake (3.50), '3' to Exit shop.")
-        print_shop_menu('Swashbuckler Sword', 5.99, 'Milkshake', 3.50)
-        shopEncounter = True
-
-    elif player_pos.colliderect(encounter_pos) and not monsterEncounter:
-        print("A wild monster randomly appears!")
-        monster = new_random_monster()
-        print(f"Monster Name: {monster['name']}")
-        print(f"Description: {monster['description']}")
-        print(f"Health: {monster['health']}, Power: {monster['power']}, Money: {monster['money']}")
-        
-        if player.health > 0:
-            player.take_damage(monster['power'])
-            print(f"You took damage! Current health: {player.health}")
-            if player.health <= 0:
-                print("You have been defeated!")
-
-        encounterMessage = f"Encountered {monster['name']}! Health: {monster['health']}"
-        monsterEncounter = True
-
-        # Start the timer for the encounter message
-        interactionMessageTime = time.time()  # Trigger the timer when the encounter happens
-            
-        return encounterMessage
-    
-    return None
+# Message display timer
+encounter_message_time = None
 
 def drawGrid():
     """
@@ -146,8 +119,8 @@ def drawGameElements():
     # Draw shop (green circle)
     pygame.draw.circle(screen, GREEN, shop_pos.center, CELL_SIZE // 2)
 
-    # Draw random encounter (red circle)
-    pygame.draw.circle(screen, RED, encounter_pos.center, CELL_SIZE // 2)
+    # Draw the monster (red circle)
+    pygame.draw.circle(screen, RED, monster.rect.center, CELL_SIZE // 2)
 
 def draw_text(text, position):
     """
@@ -163,15 +136,74 @@ def draw_text(text, position):
     text_surface = font.render(text, True, FONT_COLOR)
     screen.blit(text_surface, position)
 
+def itemShop():
+    """
+    Function to handle when the player is on the shop circle, able to take input to buy items
+    """
+    if not player.in_shop:  # Check if player is not already in the shop
+        print("You have entered the shop.")
+        player.enter_shop()  # Mark the player as in the shop
+
+
+    shop_inventory = [
+        {'name': 'Swashbuckler Sword', 'type': 'weapon', 'price': 5.99},
+        {'name': 'Milkshake', 'type': 'healthBoost', 'price': 3.50}
+    ]
+    # Display available items in the shop
+    for idx, item in enumerate(shop_inventory, 1):
+        print(f"Press '{idx}' to buy {item['name']} for {item['price']} gold.")
+    print("Press '3' to exit the shop.")
+
+    validInput = False
+    lastPosition = player_pos.copy()
+
+    while not validInput:
+        userInput = input("Choose and option 1, 2, or 3: ").strip()
+        
+        if userInput == '1' and len(shop_inventory) >= 1:
+            item = shop_inventory[0]
+            if player.gold >= item['price']:
+                player.gold -= item['price']
+                player.equipped_items.append(item['name'])
+                print(f"You purchased {item['name']}!")
+                shop_inventory.pop(0)  # Remove item from shop inventory
+            else:
+                print(f"Not enough gold to purchase {item['name']}.")
+            validInput = True
+        elif userInput == '2' and len(shop_inventory) >= 1:
+            item = shop_inventory[1]
+            if player.gold >= item['price']:
+                player.gold -= item['price']
+                player.equipped_items.append(item['name'])
+                print(f"You purchased {item['name']}!")
+                shop_inventory.pop(1)
+            else:
+                print(f"Not enough gold to purchase {item['name']}.")
+            validInput = True
+        elif userInput == '3':
+            print("Exiting shop.")
+            player_pos.x = lastPosition.x
+            player_pos.y = lastPosition.y
+            player.exit_shop() # Exit the shop
+            validInput = True
+        else:
+            print("Invalid choice. Please enter '1', '2', or '3'.")
+
+
 #Game Loop code
 running = True
+gameOver = False
+
 while running: 
     screen.fill(WHITE) #Set background screen as white
 
     drawGrid() # Draw grid
 
     drawGameElements() # Draw player, shop, and random monster encounter
-    
+
+    # Move the monster randomly
+    monster.move()
+
     # Code handling keyboard interaction with player movement
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -187,34 +219,43 @@ while running:
                 player_pos.move_ip(-CELL_SIZE, 0)  # Move left
             elif event.key == pygame.K_RIGHT and player_pos.right < WINDOW_SIZE:
                 player_pos.move_ip(CELL_SIZE, 0)  # Move right
-            elif player_pos.colliderect(shop_pos):
-                itemShop()
-            #     player.buy_item('Swashbuckler Sword', 5.99)
-            # elif event.key == pygame.K_2 and player_pos.colliderect(shop_pos) and not shopEncounter:
-            #     player.buy_item('Milkshake', 3.50)
-            # elif event.key == pygame.K_3 and player_pos.colliderect(shop_pos) and not shopEncounter:
-            #     print("You have exited the shop.")
-            #     shopEncounter = True # Preventing bugs
-
-    interactionMessage = handleInteraction()
-
-    # Display interaction message (if any)
-    if interactionMessage:
-        draw_text(interactionMessage, (10, 10))  # Draw text at the top left
+        
+    if player_pos.colliderect(shop_pos):
+        itemShop()
+        player_pos
 
     draw_text(f"Health: {player.health}", (10, 40))
     draw_text(f"Gold: {player.gold:.2f}", (10, 70))
     draw_text(f"Inventory: {', '.join(player.equipped_items) if player.equipped_items else 'None'}", (10, 100))
 
-    # If the player is on the monster encounter area, display the encounter message
-    if encounterMessage:
-        draw_text(encounterMessage, (10, 130))  # Display monster encounter message
+    # Check if the player and the monster are on the same square
+    if monster.check_encounter(player_pos):
+        player.health -= 10  # Decrease player health by 10
+        encounter_message_time = time.time()  # Track the time the encounter happens
+        
+
+    # Display encounter message for a few seconds
+    if encounter_message_time:
+        elapsed_time = time.time() - encounter_message_time
+        if elapsed_time < 3:  # Show message for 3 seconds
+            draw_text(f"A wild {monster.name} attacks! You lose 10 HP!", (10, 10))
+        else:
+            encounter_message_time = None  # Reset encounter message timer
+
+    # Check if the player has died
+    if player.health <= 0 and not gameOver:
+        draw_text("Game Over! Press Q to quit.", (100, 150))
+        gameOver = True
 
     pygame.display.flip() # Update display
+
+    # If the game is over, wait for player to quit
+    if gameOver:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_q):
+                running = False
 
     pygame.time.Clock().tick(10) # Frame rate (FPS)
 
 
 pygame.quit() # Guit game failsafe 
-
-
