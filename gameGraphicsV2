@@ -192,6 +192,7 @@ def itemShop():
 
 #Game Loop code
 running = True
+gameOver = False
 
 while running: 
     screen.fill(WHITE) #Set background screen as white
@@ -202,7 +203,7 @@ while running:
 
     # Move the monster randomly
     monster.move()
-    
+
     # Code handling keyboard interaction with player movement
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -231,7 +232,7 @@ while running:
     if monster.check_encounter(player_pos):
         player.health -= 10  # Decrease player health by 10
         encounter_message_time = time.time()  # Track the time the encounter happens
-        print(f"A wild {monster.name} attacks! You lose 10 health!")
+        
 
     # Display encounter message for a few seconds
     if encounter_message_time:
@@ -241,8 +242,18 @@ while running:
         else:
             encounter_message_time = None  # Reset encounter message timer
 
+    # Check if the player has died
+    if player.health <= 0 and not gameOver:
+        draw_text("Game Over! Press Q to quit.", (100, 150))
+        gameOver = True
 
     pygame.display.flip() # Update display
+
+    # If the game is over, wait for player to quit
+    if gameOver:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_q):
+                running = False
 
     pygame.time.Clock().tick(10) # Frame rate (FPS)
 
