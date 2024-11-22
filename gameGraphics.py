@@ -79,6 +79,10 @@ class WanderingMonster:
     def check_encounter(self, player_rect):
         # Check if the player is in the same position as the monster
         return self.rect.colliderect(player_rect)
+    
+# Doubling monster spawning function
+def spawn_monsters(count):
+    return [WanderingMonster() for _ in range(count)]
 
 # Initialize player
 player = Player()
@@ -86,8 +90,9 @@ player = Player()
 #Set player position at the 0,0 left corner
 player_pos = pygame.Rect(0, 0, CELL_SIZE, CELL_SIZE)
 
-# Create a monster
-monster = WanderingMonster()
+# Spawn initial monsters
+monster_count = 1
+monsters = spawn_monsters(monster_count)
 
 # Create the shop randomly placed
 shop_pos = pygame.Rect(random.randint(0, GRID_SIZE-1) * CELL_SIZE, random.randint(0, GRID_SIZE-1) * CELL_SIZE, CELL_SIZE, CELL_SIZE)
@@ -119,8 +124,10 @@ def drawGameElements():
     # Draw shop (green circle)
     pygame.draw.circle(screen, GREEN, shop_pos.center, CELL_SIZE // 2)
 
-    # Draw the monster (red circle)
-    pygame.draw.circle(screen, RED, monster.rect.center, CELL_SIZE // 2)
+    # Draw the monster, or monsters (red circle)
+    for monster in monsters:
+        pygame.draw.circle(screen, RED, monster.rect.center, CELL_SIZE // 2)  # Draw each monster (red circle)
+
 
 def draw_text(text, position):
     """
@@ -201,8 +208,9 @@ while running:
 
     drawGameElements() # Draw player, shop, and random monster encounter
 
-    # Move the monster randomly
-    monster.move()
+    # Move the monster/monsters randomly
+    for monster in monsters:
+        monster.move()
 
     # Code handling keyboard interaction with player movement
     for event in pygame.event.get():
@@ -242,18 +250,37 @@ while running:
         else:
             encounter_message_time = None  # Reset encounter message timer
 
-    # Check if the player has died
+     # Check if the player has died and give options
     if player.health <= 0 and not gameOver:
-        draw_text("Game Over! Press Q to quit.", (100, 150))
+        message_display_time = time.time()  # Start timer for "Game Over" message
         gameOver = True
 
-    pygame.display.flip() # Update display
+    # If game is over, display the "Game Over" message 
+    if gameOver:
+        elapsed_time = time.time() - message_display_time
+        if elapsed_time < 5:  # Show message for 5 seconds
+            draw_text("Game Over! Press M to double the monsters, or Q to quit.", (100, 150))
+        else:
+            draw_text("Press M to double the monsters, or Q to quit.", (100, 150))
 
-    # If the game is over, wait for player to quit
+    # If all monsters are defeated, double the monsters
+    if gameOver:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_m):
+                # Reset player health and monsters
+                player.health = 100
+                monsters = spawn_monsters(monster_count * 2)  # Double the number of monsters
+                gameOver = False
+                monster_count *= 2
+    
+    # User input quit logic
     if gameOver:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_q):
                 running = False
+
+    
+    pygame.display.flip() # Update display
 
     pygame.time.Clock().tick(10) # Frame rate (FPS)
 
