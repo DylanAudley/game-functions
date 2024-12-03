@@ -193,6 +193,11 @@ while running:
         else:
             draw_text("Press M to double the monsters, or Q to quit.", (100, 150))
 
+    # Display player information
+    draw_text(f"Health: {player.health}", (10, 40))
+    draw_text(f"Gold: {player.gold:.2f}", (10, 70))
+    draw_text(f"Inventory: {', '.join(player.equipped_items) if player.equipped_items else 'None'}", (10, 100))
+
     # User input quit logic
     if gameOver:
         for event in pygame.event.get():
