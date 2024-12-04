@@ -122,9 +122,11 @@ def drawGameElements():
     # Draw player (blue square)
     pygame.draw.rect(screen, (0, 0, 255), player_pos)
 
-    # Draw the monster(s) (red circle)
+    # Draw the monster(s) png files or red circle if no access
     for monster in monsters:
-        pygame.draw.circle(screen, RED, monster.rect.center, CELL_SIZE // 2)  # Draw each monster (red circle)
+        screen.blit(monster_images[monster.name], monster.rect.topleft)
+        else: 
+            pygame.draw.circle(screen, RED, monster.rect.center, CELL_SIZE // 2)  # Draw each monster (red circle)
 
 def draw_text(text, position):
     """
