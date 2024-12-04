@@ -21,6 +21,10 @@ pygame.display.set_caption("Game Grid")
 # Font setup
 font = pygame.font.SysFont("Times New Roman", 12)
 
+# Import troll png file 
+troll_image = pygame.image.load("/mnt/data/hairyTroll1.png")
+troll_image = pygame.transform.scale(troll_image, (CELL_SIZE, CELL_SIZE))  # Scale image to fit grid cell
+
 # Player class to encapsulate all player data
 class Player:
     def __init__(self):
@@ -76,6 +80,11 @@ class WanderingMonster:
     def check_encounter(self, player_rect):
         # Check if the player is in the same position as the monster
         return self.rect.colliderect(player_rect)
+    
+    def draw(self, screen):
+        # Import monster image files
+        if self.name == 'troll':
+            screen.blit(troll_image, self.rect.topleft)  # Draw troll image
 
 # Doubling monster spawning function
 def spawn_monsters(count):
@@ -111,9 +120,9 @@ def drawGameElements():
     # Draw player (blue square)
     pygame.draw.rect(screen, (0, 0, 255), player_pos)
 
-    # Draw the monster(s) (red circle)
+    # Draw the monster(s) png files
     for monster in monsters:
-        pygame.draw.circle(screen, RED, monster.rect.center, CELL_SIZE // 2)  # Draw each monster (red circle)
+        monster.draw(screen)
 
 def draw_text(text, position):
     """
