@@ -25,6 +25,14 @@ font = pygame.font.SysFont("Times New Roman", 12)
 troll_image = pygame.image.load("/mnt/data/hairyTroll1.png")
 troll_image = pygame.transform.scale(troll_image, (CELL_SIZE, CELL_SIZE))  # Scale image to fit grid cell
 
+# Import giant png file
+giant_image = pygame.image.load("/mnt/data/golem_col.png")
+giant_image = pygame.transform.scale(giant_image, (CELL_SIZE, CELL_SIZE))
+
+# Import goblin png file
+goblin_image = pygame.image.load("/mnt/data/grin-goblin-HD.png")
+goblin_image = pygame.transform.scale(giant_image, (CELL_SIZE, CELL_SIZE))
+
 # Player class to encapsulate all player data
 class Player:
     def __init__(self):
@@ -85,6 +93,10 @@ class WanderingMonster:
         # Import monster image files
         if self.name == 'troll':
             screen.blit(troll_image, self.rect.topleft)  # Draw troll image
+        elif self.name == 'George the Giant':
+            screen.blit(giant_image, self.rect.topleft)  # Draw giant image
+        elif self.name == 'goblin':
+            screen.blit(goblin_image, self.rect.topleft) # Draw goblin image
 
 # Doubling monster spawning function
 def spawn_monsters(count):
