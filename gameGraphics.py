@@ -124,7 +124,10 @@ def drawGameElements():
 
     # Draw the monster(s) png files or red circle if no access
     for monster in monsters:
-        screen.blit(monster_images[monster.name], monster.rect.topleft)
+        if monster.name in monster_images:
+            screen.blit(monster_images[monster.name], monster.rect.topleft)
+        else:
+            pygame.draw.circle(screen, RED, (monster.rect.centerx, monster.rect.centery), CELL_SIZE // 2)
 
 def draw_text(text, position):
     """
