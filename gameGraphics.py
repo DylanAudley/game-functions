@@ -23,9 +23,9 @@ font = pygame.font.SysFont("Times New Roman", 12)
 
 # Import monster png files
 monster_images = {
-    "goblin": pygame.image.load("goblin.png"),
-    "troll": pygame.image.load("troll.png"),
-    "George the Giant": pygame.image.load("giant.png")
+    "goblin": pygame.image.load("grin-goblin-HD.png"),
+    "troll": pygame.image.load("hairyTroll1.png"),
+    "George the Giant": pygame.image.load("golem_col.png")
     }
 
 # Scale images to cell size
@@ -125,8 +125,6 @@ def drawGameElements():
     # Draw the monster(s) png files or red circle if no access
     for monster in monsters:
         screen.blit(monster_images[monster.name], monster.rect.topleft)
-        else: 
-            pygame.draw.circle(screen, RED, monster.rect.center, CELL_SIZE // 2)  # Draw each monster (red circle)
 
 def draw_text(text, position):
     """
